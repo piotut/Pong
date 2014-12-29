@@ -5,10 +5,11 @@ WIDTH = 0
 HEIGHT = 1
 
 class Ball():
-	def __init__(self, canvas, color, screenSize):
+	def __init__(self, canvas, color, screenSize, soundHandler):
 		self.canvas = canvas
 		self.color = color
 		self.screenSize = screenSize
+		self.soundHandler = soundHandler
 		self.x = 0
 		self.y = 0
 		self.speedX = 2
@@ -24,15 +25,13 @@ class Ball():
 		pygame.draw.circle(self.canvas, self.color, (int(self.x),int(self.y)), self.radius)
 
 	def physics(self):
-
-		#if(self.x + self.radius > self.screenSize[WIDTH]) or (self.x - self.radius < 0):
-		#	self.speedX = -self.speedX
-
 		if(self.y + self.radius > self.screenSize[HEIGHT]) or (self.y - self.radius < 0):
 			self.speedY = -self.speedY
+			self.soundHandler.wall()
 
 		self.x += self.speedX
 		self.y += self.speedY
+
 
 	def bounce(self):
 		self.speedX *= -1 

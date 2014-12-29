@@ -7,7 +7,7 @@ class Paddle():
         self.screenRect = screenRect
         self.x = 0.0
         self.y = 0.0
-        self.height = 100
+        self.height = 150
         self.width = 25
         self.speedMax  = 4.0
         self.speedActual = 0.0

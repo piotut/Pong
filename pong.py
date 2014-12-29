@@ -9,53 +9,48 @@ from random import randint
 from paddle import Paddle
 from ball import Ball
 from arena import Arena
+from sound import Sound
 from referee import Referee
 
-screenWidth = 800
-screenHeight = 600      # ustalamy rozmiar ekranu
+screenWidth = 1200
+screenHeight = 600
 screenRect = (screenWidth,screenHeight)
 
 class Pong(object):
     def __init__(self):
-        pygame.init()       # incjalizujemy biblioteke pygame
+        pygame.mixer.pre_init(44100, -16, 2, 2048)
+        pygame.init()
         self.fps = pygame.time.Clock()
-        flag = DOUBLEBUF    # wlaczamy tryb podwojnego buforowania
+        flag = DOUBLEBUF
 
-        # tworzymy bufor na  grafike
         self.board = pygame.display.set_mode(screenRect, flag)
-        pygame.display.set_caption(' --- Pong --- ')
+        pygame.display.set_caption('[ --- Pong --- ]')
 
-        # zmienna stanu gry
         self.state = 1  # 1 - run, 0 - exit
 
+        self.sound = Sound()
         self.p1 = Paddle(self.board, (200,100,100),screenRect)
         self.p1.setInitialPostition(0,screenHeight/2)
-
         self.p2 = Paddle(self.board, (100,200,100),screenRect)
-        self.p2.setInitialPostition(screenWidth-25,screenHeight/2)
-
-        self.ball = Ball(self.board, (50,50,250), screenRect)
-        self.ball.setInitialPostition(320,240)
-
+        self.p2.setInitialPostition(screenWidth-self.p2.get()['width'],screenHeight/2)
+        self.ball = Ball(self.board, (50,50,250), screenRect, self.sound)
+        self.ball.setInitialPostition(screenWidth/2,screenHeight/2)
         self.arena = Arena(self.board, screenRect)
-
-        self.referee = Referee(self.ball, self.p1, self.p2, screenRect)
-
-        self.loop()           # glowna petla gry
+        self.referee = Referee(self.ball, self.p1, self.p2, screenRect, self.sound)
+        self.loop()
 
     def movep1(self, diry):
-       '''obsluga ruchow dla player1'''
+       '''Player1 moves support'''
        self.p1.move(diry)
 
     def movep2(self, diry):
-       '''obsluga ruchow dla player2'''
+       '''Player2 moves support'''
        self.p2.move(diry)
 
     def game_exit(self):
         exit()
 
     def loop(self):
- 
         flaga = 1
         while self.state==1:
             for event in pygame.event.get():
@@ -66,14 +61,14 @@ class Pong(object):
 
             if keys[K_z]:
               self.movep1(1)  # ruch w dol - p1
-
             if keys[K_a]:
               self.movep1(-1)   # ruch w gore - p1
             if keys[K_m]:
               self.movep2(1)  # ruch w dol - p2
-
             if keys[K_k]:
               self.movep2(-1)   # ruch w gore - p2
+            if keys[K_f]:
+                pygame.display.toggle_fullscreen()
 
             self.arena.render()
 
