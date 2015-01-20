@@ -11,13 +11,16 @@ from ball import Ball
 from arena import Arena
 from sound import Sound
 from referee import Referee
+from tracking import Tracking
+
+from threading import Thread
 
 screenWidth = 1200
 screenHeight = 600
 screenRect = (screenWidth,screenHeight)
 
 class Pong(object):
-    def __init__(self):
+    def __init__(self, file1=None, file2=None):
         pygame.mixer.pre_init(44100, -16, 2, 2048)
         pygame.init()
         self.fps = pygame.time.Clock()
@@ -37,6 +40,16 @@ class Pong(object):
         self.ball.setInitialPostition(screenWidth/2,screenHeight/2)
         self.arena = Arena(self.board, screenRect)
         self.referee = Referee(self.ball, self.p1, self.p2, screenRect, self.sound)
+
+        self.track = Tracking(file1, file2)
+
+        t = Thread(target=self.track.run)
+        #self.track.run()
+        t.start()
+
+        self.p1_pos = 0
+        self.p2_pos = 0
+
         self.loop()
 
     def movep1(self, diry):
@@ -59,14 +72,16 @@ class Pong(object):
 
             keys = pygame.key.get_pressed()
 
-            if keys[K_z]:
-              self.movep1(1)  # ruch w dol - p1
-            if keys[K_a]:
-              self.movep1(-1)   # ruch w gore - p1
-            if keys[K_m]:
-              self.movep2(1)  # ruch w dol - p2
-            if keys[K_k]:
-              self.movep2(-1)   # ruch w gore - p2
+
+            dirp1 = copysign(1, self.track.p1_position - self.p1_pos)
+            dirp2 = copysign(1, self.track.p2_position - self.p2_pos)
+
+            self.p1_pos += dirp1
+            self.p2_pos += dirp2
+
+            self.movep1(dirp1)
+            self.movep2(dirp2)
+            
             if keys[K_f]:
                 pygame.display.toggle_fullscreen()
 
@@ -91,4 +106,4 @@ class Pong(object):
         self.game_exit()
 
 if __name__ == '__main__':
-   Pong()
+   Pong()#'ziel1', 'czer1')
