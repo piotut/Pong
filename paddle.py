@@ -9,10 +9,13 @@ class Paddle():
         self.y = 0.0
         self.height = 150
         self.width = 25
-        self.speedMax  = 4.0
+        self.speedMax  = 10.0
         self.speedActual = 0.0
         self.direction = 0;
         self.score = 0
+
+    def set(self, y):
+        self.y = y
 
     def setInitialPostition(self, x, y):
         self.x = x

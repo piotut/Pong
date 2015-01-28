@@ -19,6 +19,9 @@ class Tracking(object):
         self.p1_position = 250
         self.p2_position = 250
 
+        self.frame = None
+        self.running = True
+
     def read_file(self, file1, file2):
         with open(file1, 'rb+') as fileh:
             hsv = fileh.read().strip()
@@ -35,16 +38,16 @@ class Tracking(object):
 
     def run(self):
 
-        p2_track_window = (400,250,90,90) #x, y, w, h
-        p1_track_window = (100,250,90,90)
+        p2_track_window = (100,250,90,90) #x, y, w, h
+        p1_track_window = (400,250,90,90)
 
-        cap = cv2.VideoCapture(1)
+        cap = cv2.VideoCapture(0)
         ret, frame = cap.read()
         hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
         p1_mask = cv2.inRange(hsv, self.p1_hsv_min, self.p1_hsv_max)
         term_crit = ( cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT, 10, 1 )
-        while(1):
+        while(self.running):
             ret, frame = cap.read()
             hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
             # dla player1
@@ -60,7 +63,8 @@ class Tracking(object):
             self.p2_position = y
             cv2.rectangle(frame, (x,y), (x+w,y+h), 255, 2)
 
-            cv2.imshow('img2',frame)
+            #cv2.imshow('img2',frame)
+            self.frame = frame
             # cv2.erode(mask, mask, None, (3, 3))
             # cv2.dilate(mask, mask, None, (8, 8))
             # cv2.imshow("image", frame)
@@ -68,9 +72,9 @@ class Tracking(object):
             #cv2.imshow("mask", p1_mask)
             #cv2.imshow("mask2", p2_mask)
 
-            k = cv2.waitKey(60) & 0xff
-            if k == 27:
-                break
+            #k = cv2.waitKey(60) & 0xff
+            #if k == 27:
+            #    break
 
 if __name__ == "__main__":
     track = Tracking()

@@ -12,8 +12,8 @@ class Ball():
 		self.soundHandler = soundHandler
 		self.x = 0
 		self.y = 0
-		self.speedX = 2
-		self.speedY = 2
+		self.speedX = 10
+		self.speedY = 10
 		self.radius = 15
 
 	def setInitialPostition(self, x, y):

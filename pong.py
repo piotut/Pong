@@ -31,6 +31,8 @@ class Pong(object):
 
         self.state = 1  # 1 - run, 0 - exit
 
+        self.track = Tracking(file1, file2)
+
         self.sound = Sound()
         self.p1 = Paddle(self.board, (200,100,100),screenRect)
         self.p1.setInitialPostition(0,screenHeight/2)
@@ -41,11 +43,11 @@ class Pong(object):
         self.arena = Arena(self.board, screenRect)
         self.referee = Referee(self.ball, self.p1, self.p2, screenRect, self.sound)
 
-        self.track = Tracking(file1, file2)
+        
 
-        t = Thread(target=self.track.run)
+        self.t = Thread(target=self.track.run)
         #self.track.run()
-        t.start()
+        self.t.start()
 
         self.p1_pos = 0
         self.p2_pos = 0
@@ -79,13 +81,13 @@ class Pong(object):
             self.p1_pos += dirp1
             self.p2_pos += dirp2
 
-            self.movep1(dirp1)
-            self.movep2(dirp2)
+            self.p1.set(self.track.p1_position+45)
+            self.p2.set(self.track.p2_position+45)
             
             if keys[K_f]:
                 pygame.display.toggle_fullscreen()
 
-            self.arena.render()
+            self.arena.render(self.track.frame)
 
             font = pygame.font.Font("gfx/ATARCC__.TTF",40)
             text1 = font.render('P1={}'.format(self.p1.getScore()), True,(200,200,200))
@@ -101,9 +103,11 @@ class Pong(object):
             self.referee.judge()
 
             pygame.display.flip()   # wyswietlamy obrazki
-            self.fps.tick(150)
+            self.fps.tick(80)
 
+        self.track.running = False 
         self.game_exit()
+        
 
 if __name__ == '__main__':
-   Pong()#'ziel1', 'czer1')
+   Pong('czerwony.txt', 'zielony.txt')
